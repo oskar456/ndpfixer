@@ -1,6 +1,9 @@
 # ndpfixer
 
-This tool can be run on a Linux router to work around broken NDP due to broken multicast.
+This tool can be run on a Linux router to work around broken NDP due to broken
+multicast. This is an implementation of [section 8.9. of RFC
+9131](https://www.rfc-editor.org/info/rfc9131/#section-8.9).
+
 
 ## What is the issue
 
