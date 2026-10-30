@@ -53,7 +53,8 @@ def get_broken_neighbors(iface):
     ip = subprocess.run(cmd, capture_output=True, text=True)
     ndpt = json.loads(ip.stdout)
     return {x.get("dst") for x in ndpt
-            if x.get("state", [""])[0] in ["FAILED", "INCOMPLETE"]}
+            if x.get("state", [""])[0] in ["FAILED", "INCOMPLETE"] and
+            not x.get("dst").startswith("fe80")}
 
 
 def fix_broken_neighbor(iface, ip, mac):
@@ -89,14 +90,14 @@ def main():
     the incoming traffic.
     """
     parser = argparse.ArgumentParser(description=main.__doc__)
-    parser.add_argument("interface", help="interface to work on")
-    parser.add_argument("-p", "--prefix", help="prefix to work on")
-    parser.add_argument("-i", "--interval", help="how many seconds between neighbor cache scans (default: %(default)s)", type=float, default=5)
+    parser.add_argument("interface", help="Interface to work on")
+    parser.add_argument("-p", "--prefix", help="Prefix to work on")
+    parser.add_argument("-i", "--interval", help="How many seconds between neighbor cache scans", type=float, default=5)
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
     if args.prefix is None:
         args.prefix = autodetect_prefix(args.interface)
-        logger.info(f"Autodetected prefix: {args.prefix}")
+        logger.debug(f"Autodetected prefix: {args.prefix}")
     do_tcpdump(args.interface, args.prefix, args.interval)
 
 
